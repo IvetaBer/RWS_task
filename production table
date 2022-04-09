@@ -1,0 +1,42 @@
+CREATE TABLE Production (
+HandoffSK           INT NOT NULL,
+HandoffID           INT NOt NULL,
+ProjectNo           varchar(50) NULL,
+SourceLanguageCode  varchar(50) NULL,
+HandoffStateName    varchar(50) NULL,
+Handoff             varchar(50) NULL,
+Createddate         Date NULL,
+Completeddate       Date NUll,
+Wordcount           float NULL,
+Priority            INT NULL
+)
+
+INSERT INTO
+Production (HandoffSK, HandoffID, ProjectNo, SourceLanguageCode, HandoffStateName, Handoff, createddate, completeddate, 
+Wordcount, Priority)
+
+SELECT
+h.HandoffSK, 
+h.HandoffID, 
+ProjectNo, 
+SourceLanguageCode, 
+HandoffStateName, 
+Handoff, 
+b.createddate, 
+b.completeddate, 
+Wordcount,
+
+CASE
+WHEN b.classification = 'H' THEN 0
+WHEN b.classification = 'M' THEN 1
+WHEN b.classification = 'L' THEN 2
+Else 3
+END AS Priority
+
+FROM 
+Handoff h 
+JOIN Tasks t on h.handoffid = t.handoffid
+JOIN base b ON h.handoffsk = b.handoffsk
+
+WHERE NOT
+b.handoffstatename  = "Canceled"
