@@ -1,0 +1,37 @@
+/****** Bonus tasks ******/
+-- 1. What percentage of Handoffs have EN-US as SourceLanguageCode?
+DECLARE @countENUS int = 0
+
+SELECT 
+count(HandoffID)
+From [rws_ukol].[dbo].[Production]
+GROUP BY  SourceLanguageCode
+HAVING SourceLanguageCode = N'EN-US'
+
+SELECT       
+@countENUS*100/(count(*)) as percentage
+FROM Production
+-- Answer 65 %
+
+
+--3. Based on Classification of Handoff calculate Due Date of Tasks, with the following logic and determine if task was delivered “Late”, “On-time” or if it’s not possible to assess. 
+SELECT
+HandoffSK, 
+HandoffID, 
+ProjectNo, 
+SourceLanguageCode, 
+HandoffStateName, 
+Handoff, 
+Createddate, 
+Completeddate, 
+Wordcount,
+Priority,
+
+CASE
+WHEN Priority = 0 THEN DATEADD(DAY, +1, createddate)
+WHEN Priority = 1 THEN DATEADD(DAY, +3, createddate)
+WHEN Priority = 2 THEN DATEADD(DAY, +5, createddate)
+ELSE DATEADD(DAY, +10, createddate)
+END AS DueDate
+
+FROM Production
