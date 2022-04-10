@@ -1,9 +1,9 @@
 /****** Bonus tasks ******/
 -- 1. What percentage of Handoffs have EN-US as SourceLanguageCode?
-DECLARE @countENUS int = 0
+DECLARE @countENUS float = 0
 
 SELECT 
-count(HandoffID)
+@countENUS = count(HandoffID)
 From [rws_ukol].[dbo].[Production]
 GROUP BY  SourceLanguageCode
 HAVING SourceLanguageCode = N'EN-US'
