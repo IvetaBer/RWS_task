@@ -11,10 +11,11 @@ HAVING SourceLanguageCode = N'EN-US'
 SELECT       
 @countENUS*100/(count(*)) as percentage
 FROM Production
--- Answer 65 %
+-- Answer 65,11 %
 
 
---3. Based on Classification of Handoff calculate Due Date of Tasks, with the following logic and determine if task was delivered “Late”, “On-time” or if it’s not possible to assess. 
+--3. Based on Classification of Handoff calculate Due Date of Tasks, with the following logic and determine if task was delivered “Late”, “On-time” or if it’s not possible to assess. 
+;with T AS(
 SELECT
 HandoffSK, 
 HandoffID, 
@@ -35,3 +36,23 @@ ELSE DATEADD(DAY, +10, createddate)
 END AS DueDate
 
 FROM Production
+)
+SELECT
+HandoffID, 
+ProjectNo, 
+SourceLanguageCode, 
+HandoffStateName, 
+Handoff, 
+Createddate, 
+Completeddate, 
+Wordcount,
+Priority,
+DueDate,
+
+CASE
+WHEN Completeddate = 'null' THEN 'not possible to assess'
+WHEN DueDate >= Completeddate THEN 'on time'
+ELSE 'late'
+END AS OnTime
+
+FROM T
